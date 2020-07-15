@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from sign.models import Event
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from sign.db_mysql import DB
 
 
 # 添加发布会接口
@@ -11,9 +12,11 @@ def add_event(request):
     status = request.POST.get('status', '')  # 状态
     address = request.POST.get('address', '')  # 地址
     start_time = request.POST.get('start_time', '')  # 发布会时间
+    print(111111111111111111)
     if eid == '' or name == '' or limit == '' or address == '' or start_time == '':
         return JsonResponse({'status': 10021, 'message': 'parameter error'})
     result = Event.objects.filter(id=eid)
+    print(result, 'xxxxxxxxxxxxxxxxxxxxxxxx')
     if result:
         return JsonResponse({'status': 10022, 'message': 'event id already exists'})
     result = Event.objects.filter(name=name)
@@ -25,7 +28,7 @@ def add_event(request):
         Event.objects.create(id=eid, name=name, limit=limit, address=address, status=int(status), start_time=start_time)
     except ValidationError as e:
         error = 'start_time format error. It must be in YYYY-MM-DD HH:MM:SS format.'
-        return JsonResponse({'status': 10024, 'message': 'error'})
+        return JsonResponse({'status': 10024, 'message': error})
     return JsonResponse({'status': 200, 'message': 'add event success'})
 
 
@@ -67,5 +70,14 @@ def get_event_list(request):
 
 
 # 添加嘉宾接口
-def add_guest(request):
-    eid = request.POST.get('eid', '')
+# def add_guest(request):
+#     eid = request.POST.get('eid', '')
+
+# 删除用户接口
+def delete_sign_guest(request):
+    db = DB()
+    data = request.GET.get('phone', '')
+    print(data,1111111111111111111111111111111111111)
+    # eid = request.GET.get('eid','')
+    db.delete('sign_guest', data)
+    return JsonResponse({'status': 200, 'message': 'success'})
