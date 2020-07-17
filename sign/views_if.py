@@ -1,7 +1,9 @@
 from django.http import JsonResponse
-from sign.models import Event
+from sign.models import Event, Guest
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from sign.db_mysql import DB
+from django.db.utils import IntegrityError
+import time
 
 
 # 添加发布会接口
@@ -70,14 +72,33 @@ def get_event_list(request):
 
 
 # 添加嘉宾接口
-# def add_guest(request):
-#     eid = request.POST.get('eid', '')
+def add_guest(request):
+    eid = request.POST.get('eid', '')  # 关联发布会ID
+    realname = request.POST.get('realname', '')  # 姓名
+    phone = request.POST.get('phone', '')  # 手机号
+    email = request.POST.get('email', '')  # 邮箱
+
+    if eid == '' or realname == '' or phone == '':
+        return JsonResponse({'status': '10021', 'message': 'parameter error'})
+    result = Event.objects.filter(id=eid)
+    print(result, 11111111111111111111111111)
+    if not result:
+        return JsonResponse({'status': '10022', 'message': 'event id null'})
+    result = Event.objects.get(id=eid).status
+    print(result, 11111111111111111111111111)
+    if not result:
+        return JsonResponse({'status': '10023', 'message': 'event status is not available'})
+    event_limit = Event.objects.get(id=eid).status  # 发布会人数限制
+    guest_limit = Guest.objects.filter(event_id=eid)  # 添加嘉宾人数
+    if len(guest_limit) >= event_limit:
+        return JsonResponse({'status': '10024', 'message': 'evet number is full'})
+
 
 # 删除用户接口
 def delete_sign_guest(request):
     db = DB()
     data = request.GET.get('phone', '')
-    print(data,1111111111111111111111111111111111111)
+    print(data, 1111111111111111111111111111111111111)
     # eid = request.GET.get('eid','')
     db.delete('sign_guest', data)
     return JsonResponse({'status': 200, 'message': 'success'})
