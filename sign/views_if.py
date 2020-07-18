@@ -79,7 +79,7 @@ def add_guest(request):
     realname = request.POST.get('realname', '')  # 姓名
     phone = request.POST.get('phone', '')  # 手机号
     email = request.POST.get('email', '')  # 邮箱
-
+    print(eid,111111111111111111111111111111)
     if eid == '' or realname == '' or phone == '':
         return JsonResponse({'status': '10021', 'message': 'parameter error'})
     result = Event.objects.filter(id=eid)
@@ -117,12 +117,12 @@ def add_guest(request):
 def get_guest_list(request):
     eid = request.GET.get('eid', '')  # 关联发布会ID
     phone = request.GET.get('phone', '')  # 嘉宾手机号
+    print(eid, phone, 1111111111111111)
     if eid == '':
         return JsonResponse({'status': '100201', 'message': 'eid connot be empty'})
     if eid != '' and phone == '':
         datas = []
         results = Guest.objects.filter(event_id=eid)
-        print(results, 11111111111111111111111)
         if results:
             for r in results:
                 guest = {}
