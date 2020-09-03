@@ -104,7 +104,7 @@ def guest_manage(request):
     print(guest_list)
     username = request.session.get('user', '')
     paginator = Paginator(guest_list, 10)
-    print(Paginator,11111111111111111111111111111)
+    print(Paginator, 11111111111111111111111111111)
     page = request.GET.get('page')
     try:
         contacts = paginator.page(page)
@@ -189,11 +189,13 @@ def sign_index(request, eid):
 def sign_index_action(request, eid):
     event = get_object_or_404(Event, id=eid)
     phone = request.POST.get('phone', '')
-    print(phone)
+    print(phone, 1111111)
     result = Guest.objects.filter(phone=phone)
+    print(result, 222222222)
     if not result:
         return render(request, 'sign_index.html', {'event': event, 'hint': '手机号码错误!'})
     result = Guest.objects.filter(phone=phone, event_id=eid)
+    print(result, 1111111111111111111111111111111111111111)
 
     if not result:
         return render(request, 'sign_index.html', {'event': event, 'hint': '手机号码或用户不存在!'})
@@ -207,7 +209,9 @@ def sign_index_action(request, eid):
         Guest.objects.filter(phone=phone, event_id=eid).update(sign='1')
         return render(request, 'sign_index.html', {'event': event, 'hint': '签到成功!', 'guest': result})
 
-    # 退出
+        # 退出
+
+
 @login_required
 def loginout(request):
     auth.logout(request)  # 退出系统
