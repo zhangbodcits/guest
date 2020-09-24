@@ -6,11 +6,16 @@ from sign.models import Event, Guest
 from django.forms.models import model_to_dict
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, get_object_or_404
+from log import Log
+
+log = Log()
 
 
 # Create your views here.
 def index(request):
+    log.info("登陆成功")
     return render(request, 'index.html')
+
 
 
 # 登陆模块
@@ -24,6 +29,8 @@ def login_action(request):
             response = HttpResponsePermanentRedirect('/event_manage/')
             # response.set_cookie('user',username,3600)#添加浏览器cookie
             request.session['user'] = username
+            message = username + "欢迎"
+            log.info(message)
             return response
         else:
             return render(request, 'index.html', {'error': 'username or password error!'})
